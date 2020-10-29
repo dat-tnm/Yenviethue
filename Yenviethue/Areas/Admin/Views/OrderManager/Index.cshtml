@@ -1,0 +1,155 @@
+﻿@model Yenviethue.Models.ViewModels.OrderListVM
+@using Yenviethue.Utility
+@{
+    ViewData["Title"] = "Index";
+}
+
+<form method="post">
+    <div class="row backgroundWhiteBorder p-2 mb-3 rounded">
+        <h2 class="text-info">Order Manager - index</h2>
+        <br />
+        @if (Model.OrderList.Count() > 0)
+        {
+            <table class="table table-hover border">
+                <tr class="table-secondary">
+                    <th>
+                        Id
+                    </th>
+                    <th>
+                        Created Date
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Phone
+                    </th>
+                    <th>
+                        Total
+                    </th>
+                    <th></th>
+                    <th></th>
+
+                </tr>
+                @foreach (var item in Model.OrderList)
+                {
+                    <tr>
+                        <td>
+                            @item.OrderHeader.Id
+                        </td>
+                        <td>
+                            @item.OrderHeader.CreatedDate
+                        </td>
+                        <td>
+                            @item.OrderHeader.ShippingInfo.Name
+                        </td>
+                        <td>
+                            @item.OrderHeader.ShippingInfo.Phone
+                        </td>
+                        <td>
+                            @SD.FormatCurrencyVND(item.OrderHeader.OrderTotal)
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                <i class="far fa-list-alt"></i> Details
+                            </button>
+                        </td>
+                        <td>
+                            @if (item.OrderHeader.Status.Equals(SD.StatusSubmitted))
+                            {
+                                <button type="submit" asp-action="SetStatusConfirmed" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-primary form-control mb-3">
+                                    <i class="fas fa-check"></i> &nbsp; Confirm Order
+                                </button>
+                                <button type="submit" asp-action="SetStatusCancelled" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-danger form-control mb-3">
+                                    <i class="fas fa-times"></i> &nbsp; Cancel Order
+                                </button>
+                            }
+                            else if (item.OrderHeader.Status.Equals(SD.StatusConfirmed))
+                            {
+                                <button type="submit" asp-action="SetStatusInProcess" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-success form-control mb-3">
+                                    <i class="fas fa-flag-checkered"></i> &nbsp; Order Shipped
+                                </button>
+                                <button type="submit" asp-action="SetStatusCancelled" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-danger form-control mb-3">
+                                    <i class="fas fa-times"></i> &nbsp; Cancel Order
+                                </button>
+                            }
+                            else if (item.OrderHeader.Status.Equals(SD.StatusInProcess))
+                            {
+                                <button type="submit" asp-action="SetStatusCompleted" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-success form-control mb-3">
+                                    <i class="fas fa-flag-checkered"></i> &nbsp; Order Delivered
+                                </button>
+                                <button type="submit" asp-action="SetStatusCancelled" asp-route-OrderId="@item.OrderHeader.Id" class="btn btn-danger form-control mb-3">
+                                    <i class="fas fa-times"></i> &nbsp; Cancel Order
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div page-model="@Model.PagingInfo" page-classes-enabled="true" page-class="btn border"
+                 page-class-normal="btn btn-light" page-class-selected="btn btn-info active"
+                 class="btn-group">
+            </div>
+            <br />
+        }
+        else
+        {
+            <p>No order exists...</p>
+        }
+    </div>
+</form>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-light ">
+                <div class="col-10 offset-1">
+                    <center><h5 class="modal-title">Order Details</h5></center>
+                </div>
+                <div class="col-1">
+                    <button type="button" class="float-right btn-outline-secondary close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body justify-content-center" id="myModalContent">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        var PostBackURL = '/Order/GetOrderDetails';
+
+        $(function () {
+            $(".anchorDetail").click(function () {
+
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    datatyype: "json",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed");
+                    }
+                });
+
+            });
+
+
+        });
+    </script>
+}
+

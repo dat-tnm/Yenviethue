@@ -1,0 +1,46 @@
+﻿@model Yenviethue.Models.ViewModels.CatalogVM
+
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+<style>
+    .category-img {
+        max-height: 350px;
+    }
+</style>
+
+<div class="backgroundWhiteBorder container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Danh mục</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4">
+            <partial name="_CatalogSidebar" model="@Model" />
+        </div>
+        <div class="col-md-8 p-3">
+            @foreach (var category in Model.CategoryList)
+            {
+                <div class="row mb-3">
+                    <div class="col-lg-6 category-img">
+                        <img class="img-fluid" src="@category.ImgSrc" />
+                    </div>
+                    <div class="col-lg-6">
+                        <a class="nav-link font-weight-bold" asp-controller="Catalog" asp-action="Category" asp-route-id="@category.Id">@category.Name</a>
+                        <ul class="list-group-flush">
+                            @foreach (var subCategory in Model.RepoSubCategoryList[category.Id])
+                            {
+                                <li class="list-group-item p-0">
+                                    <a class="nav-link" asp-controller="Catalog" asp-action="SubCategory" asp-route-id="@subCategory.Id">@subCategory.Name</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

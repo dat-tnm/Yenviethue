@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Yenviethue</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+</head>
+<body class="backgroundGray">
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom">
+            <div class="container">
+                <button class="" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <div class="flex-grow-0">
+                    <partial name="_LoginPartial" />
+                </div>
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+    <style>
+        .side-bar {
+            border: 1px solid transparent;
+            padding-top: 57px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 230px;
+            min-height: 700px;
+            height: 100%;
+            z-index: 810;
+            font-size: 14px;
+            transition: transform .3s ease-in-out,width .3s ease-in-out;
+        }
+
+        .content-wrapper {
+            margin-left: 230px;
+            min-height: 524px;
+        }
+
+        .dropdown-header-btn {
+            display: inline-flex;
+            width: 100%;
+            height: 40px;
+            text-align: left;
+            font-size: 1rem;
+            padding: .375rem .75rem;
+            border: 1px solid transparent;
+        }
+
+        nav {
+            z-index: 1200;
+        }
+    </style>
+    <div>
+        <div class="side-bar border-right bg-light accordion" id="accordion">
+            <div id="header-Catalogs">
+                <a class="dropdown-header-btn" data-toggle="collapse" data-target="#collapse-Catalogs" aria-expanded="false" aria-controls="collapse-Catalogs">
+                    <p class="flex-grow-1">Catalogs</p>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+            <div id="collapse-Catalogs" class="collapse " aria-labelledby="header-Catalogs" data-parent="#accordion">
+                <div class="card-body p-0 m-1">
+                    <ul class="list-group-flush p-0">
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
+                        </li>
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="SubCategory" asp-action="Index">SubCategory</a>
+                        </li>
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
+                        </li>
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tag</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="header-Promotions">
+                <a class="dropdown-header-btn" data-toggle="collapse" data-target="#collapse-Promotions" aria-expanded="false" aria-controls="collapse-Promotions">
+                    <p class="flex-grow-1">Promotions</p>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+            <div id="collapse-Promotions" class="collapse " aria-labelledby="header-Promotions" data-parent="#accordion">
+                <div class="card-body p-0 m-1">
+                    <ul class="list-group-flush p-0">
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Coupon" asp-action="Index">Coupon</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="header-Sales">
+                <a class="dropdown-header-btn" data-toggle="collapse" data-target="#collapse-Sales" aria-expanded="false" aria-controls="collapse-Sales">
+                    <p class="flex-grow-1">Sales</p>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+            <div id="collapse-Sales" class="collapse" aria-labelledby="header-Sales" data-parent="#accordion">
+                <div class="card-body p-0 m-1">
+                    <ul class="list-group-flush p-0">
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="OrderManager" asp-action="Index">Order Manager</a>
+                        </li>
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="OrderManager" asp-action="AllOrder">List All Order</a>
+                        </li>
+                        <li class="list-group-item p-0">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="CartManager" asp-action="Index">Shopping Cart</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <main role="main" class="p-3 container">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

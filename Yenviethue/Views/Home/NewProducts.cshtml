@@ -1,0 +1,20 @@
+﻿@model Yenviethue.Models.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Sản phẩm mới";
+}
+
+<div class="backgroundWhiteBorder container">
+    <div class="row p-1">
+        <div class="col-10 offset-1 text-center p-3 mb-5 border-bottom"><h3>SẢN PHẨM MỚI</h3></div>
+    </div>
+    <div class="mb-5">
+        <partial name="_ListProductPartial" model="@Model.ProductList" />
+    </div>
+    <partial name="_PagingLinkPartial" model="@Model.PagingInfo" />
+</div>
+@section Scripts{
+    <script>
+        $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+}

@@ -1,0 +1,84 @@
+﻿@model Yenviethue.Models.ViewModels.CartManagerVM
+
+@{
+    ViewData["Title"] = "ShoppingCart List";
+}
+
+
+<div class="backgroundWhiteBorder">
+    <div class="row">
+        <div class="col-6">
+            <h2>ShoppingCart List</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn-link" asp-action="Guest">Guest List</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <form method="post" asp-area="Admin" asp-controller="CartAdmin" asp-action="DeleteOutDateCarts">
+                <button type="submit" class="btn btn-danger">Delete all out date Carts</button>
+            </form>
+        </div>
+        <div class="col-6">
+            <form method="post" asp-area="Admin" asp-controller="CartAdmin" asp-action="DeleteAllCart">
+                <button type="submit" class="btn btn-danger">Delete all carts</button>
+            </form>
+        </div>
+    </div>
+
+    <br />
+    <div>
+        @if (Model.CartList.Count() > 0)
+        {
+            <table class="table table-striped border">
+                <tr class="table-secondary">
+                    <th>
+                        User Id
+                    </th>
+                    <th>
+                        Guest Id
+                    </th>
+                    <th>
+                        Product Id
+                    </th>
+                    <th>
+                        Count
+                    </th>
+                </tr>
+                @foreach (var item in Model.CartList)
+                {
+                    <tr>
+                        <td>
+                            @if (item.ApplicationUserId != null)
+                            {
+                                <textarea style="width:100%">@item.ApplicationUserId</textarea>
+                            }
+                        </td>
+                        <td>
+                            @if (item.GuestId != null)
+                            {
+                                <textarea style="width:100%">@item.GuestId.Substring(26)</textarea>
+                            }
+                        </td>
+                        <td>
+                            @item.ProductId
+                        </td>
+                        <td>
+                            @item.Count
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div page-model="@Model.PagingInfo" page-classes-enabled="true" page-class="btn border"
+                 page-class-normal="btn btn-light" page-class-selected="btn btn-info active"
+                 class="btn-group">
+            </div>
+        }
+        else
+        {
+            <p>No shopping carts exists...</p>
+        }
+
+    </div>
+</div>

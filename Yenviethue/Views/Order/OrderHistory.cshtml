@@ -1,0 +1,152 @@
+﻿@model Yenviethue.Models.ViewModels.OrderListVM
+@using Yenviethue.Utility
+@{
+    ViewData["Title"] = "Lịch sử đặt hàng";
+}
+
+<br /><br />
+<div class="backgroundWhiteBorder container">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-info">Danh sách đơn hàng đã đặt</h2>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        @if (Model.OrderList.Count() > 0)
+        {
+            <table class="row table table-bordered m-0">
+                <thead class="row col-12 d-lg-block d-none">
+                    <tr class="row col-12">
+                        <th class="col-1">Id</th>
+                        <th class="col-3">Tên</th>
+                        <th class="col-2">Số điện thoại</th>
+                        <th class="col-2">Tổng mặt hàng mua</th>
+                        <th class="col-2">Tổng thanh toán</th>
+                        <th class="col-2"></th>
+                    </tr>
+                </thead>
+                <tbody class="row col-12">
+                    @foreach (var item in Model.OrderList)
+                    {
+                        <tr class="row col-lg-12 col-md-6">
+                            <td class="col-lg-1">
+                                <p class="d-lg-none font-weight-bold">Id:</p>@item.OrderHeader.Id
+                            </td>
+                            <td class="col-lg-3">
+                                <p class="d-lg-none font-weight-bold">Sdt:</p>@item.OrderHeader.ShippingInfo.Name
+                            </td>
+                            <td class="col-lg-2">
+                                <p class="d-lg-none font-weight-bold">Sdt:</p>@item.OrderHeader.ShippingInfo.Phone
+                            </td>
+                            <td class="col-lg-2">
+                                <p class="d-lg-none font-weight-bold">Mặt hàng:</p>@item.OrderProductList.Count
+                            </td>
+                            <td class="col-lg-2">
+                                <p class="d-lg-none font-weight-bold">Tổng:</p>@SD.FormatCurrencyVND(item.OrderHeader.OrderTotal)
+                            </td>
+                            <td class="col-lg-2">
+                                <button type="button" class="w-100 btn btn-outline-success anchorDetail" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                    <i class="far fa-list-alt"></i> Chi tiết
+                                </button>
+                                <button type="button" class="w-100 btn btn-outline-info btnOrderStatus" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                    <i class="far fa-clock"></i> Tình trạng
+                                </button>
+                            </td>
+                        </tr>
+                    }
+            </table>
+            <br />
+            <partial name="_PagingLinkPartial" model="@Model.PagingInfo" />
+            }
+            else
+            {
+            <p>Chưa có đơn hàng nào...</p>
+            }
+</div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-light justify-content-center">
+                <h5 class="modal-title">Chi tiết đơn hàng</h5>
+            </div>
+            <div class="modal-body justify-content-center" id="myModalContent">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myOrderStatus" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-light justify-content-center">
+                <h5 class="modal-title">Trạng thái đơn hàng</h5>
+            </div>
+            <div class="modal-body justify-content-center" id='myOrderStatusContent'>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" style="width:20%" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+    {
+    <script>
+        var PostBackURL = '/Order/GetOrderDetails';
+        var OrderStatusURL = '/Order/GetOrderStatus';
+
+        $(function () {
+            $(".anchorDetail").click(function () {
+
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    dataType: "html",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed");
+                    }
+                });
+
+            });
+
+            $(".btnOrderStatus").click(function () {
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                $.ajax({
+                    type: "GET",
+                    url: OrderStatusURL,
+                    contentType: "text/html; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    dataType: "html",
+                    success: function (data) {
+                        $('#myOrderStatusContent').html(data);
+                        $('#myOrderStatus').modal('show');
+
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed.");
+                    }
+                });
+            });
+        });
+    </script>
+}

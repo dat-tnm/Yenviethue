@@ -1,0 +1,172 @@
+﻿@using Yenviethue.Utility
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor _httpContextAccessor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Yenviethue</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+</head>
+<body class="backgroundGray">
+    <header>
+        <div class="navbar navbar-expand-md navbar-light bg-white border-bottom d-flex justify-content-between">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="tel:02862651818" class="text-danger">
+                        <i class="fas fa-phone"></i>
+                        Hotline <strong>(028) 6265.1818</strong>
+                    </a>
+                </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="btn btn-outline-danger" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard admin</a>
+                    </li>
+                }
+            </ul>
+            <div>
+                <img style="height:50px" class="align-self-center" src="//bizweb.dktcdn.net/100/344/969/themes/705911/assets/logo.png?1596077648858" style="max-height:50px;">
+            </div>
+            <div>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </header>
+    <nav class="navbar navbar-expand-md navbar-toggleable-md navbar-light bg-white border-bottom box-shadow m-0 sticky-top">
+        <div class="container font-weight-bold">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-md-inline-flex flex-md-row-reverse">
+                <ul class="navbar-nav flex-grow-1">
+                    <li>
+                        <a class="navbar-brand text-danger font-weight-bold" href="/">
+                            <i class="fas fa-home"></i>Trang chủ
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link text-dark dropdown-toggle" id="dropdownCategories" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DANH MỤC</a>
+                        <div class="dropdown-menu m-0" aria-labelledby="dropdownCategories" id="menuCategories">
+
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link text-dark dropdown-toggle" id="dropdownFeatureProduct" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SẢN PHẨM</a>
+                        <div class="dropdown-menu m-0" aria-labelledby="dropdownFeatureProduct">
+                            <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="HotProducts">Sản Phẩm Bán Chạy</a>
+                            <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="NewProducts">Sản Phẩm Mới</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Promotion">KHUYẾN MÃI</a>
+                    </li>
+                </ul>
+            </div>
+            <form method="get" asp-area="" asp-controller="Catalog" asp-action="Search">
+                <ul class="flex-grow-0 m-0 input-group">
+                    <li class="nav-item input-group-prepend">
+                        <input type="text" name="search" id="search" class="form-control" required style="max-width:150px;" placeholder="Tìm kiếm" />
+                    </li>
+                    <li class="nav-item input-group-append">
+                        <button type="submit" class="btn btn-light input-group-text"><i class="fas fa-search"></i></button>
+                    </li>
+                </ul>
+            </form>
+            <ul class="nav ml-1">
+                @{ var cartCount = _httpContextAccessor.HttpContext.Session.GetInt32(SD.ssCartCount);
+                    if (cartCount != null)
+                    {
+                        <li class="nav-item">
+                            <a class="text-danger" asp-area="" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart mr-1"></i>Giỏ hàng(@cartCount)
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="text-danger" asp-area="" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart mr-1"></i>Giỏ hàng(0)
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <button type="button" class="btn btn-primary position-fixed" data-toggle="modal" data-target="#infoModal">
+        Info
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-info" id="exampleModalLabel">Info about project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Register has been blocked (can only register with facebook). Shopping cart can save into database without login.
+                    <br /><br />
+                    Payment test data: { email: any-email, card number: 4242 4242 4242 4242, date: 02/24, code: 424 }
+                    <br /><br /><br />
+
+                    <strong>Project:</strong> ecommerce website (made by tnmdat183) <br />
+                    - Admin dashboard link: https://yenviethue.somee.com/Admin/Dashboard <br />
+
+                    <strong>Modules:</strong><br />
+                    - Frontend Shop: shopping, search, shopping cart, payment...<br />
+                    - Identity: authentication, authorize, associate with facebook...<br />
+                    - Admin dashboard: manage all content, email sender, confirm payment...<br />
+
+                    <strong>Technologies:</strong> <br />
+                    - Backend: asp.net mvc core 3.1, api, entity framework core, linq.<br />
+                    - Frontend: bootstrap 4, jquery, ajax.<br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main role="main" style="min-height:650px;">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-white" style="background-color:red">
+        <div class="container">
+            &copy; 2020 - Yenviethue - <a asp-controller="Home" asp-action="Privacy">Chính sách</a>
+            About us - <a asp-controller="Home" asp-action="About">Giới thiệu</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Catalog/GetCategoryMenu",
+                contentType: "text/html; charset=utf-8",
+                dataType: "html",
+                success: function (data) {
+                    $('#menuCategories').html(data);
+                }
+            });
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

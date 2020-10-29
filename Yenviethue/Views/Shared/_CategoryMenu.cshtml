@@ -1,0 +1,9 @@
+﻿@model Yenviethue.Models.ViewModels.CatalogVM
+
+<a class="dropdown-item font-weight-bold" asp-area="" asp-controller="Catalog" asp-action="Index">Tất cả</a>
+@foreach (var category in Model.CategoryList)
+{
+    <a class="dropdown-item" asp-area="" asp-controller="Catalog" asp-action="Category" asp-route-id="@category.Id">
+        @category.Name
+    </a>
+}

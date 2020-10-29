@@ -1,0 +1,16 @@
+﻿@model string
+@using Yenviethue.Utility
+<div class="text-center">
+    @switch (Model)
+    {
+        case SD.StatusCancelled:
+            <span class="btn btn-danger">Cancelled</span>
+            break;
+        case SD.StatusSubmitted:
+            <span class="btn btn-info">Waiting for confirming</span>
+            break;
+        default:
+            <span class="btn btn-success">@Model</span>
+            break;
+    }
+</div>

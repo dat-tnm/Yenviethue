@@ -1,0 +1,27 @@
+﻿@model Yenviethue.Models.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Tìm kiếm";
+}
+
+    <div class="backgroundWhiteBorder container">
+        @if (Model.ProductList.Count() > 0)
+        {
+            <div class="row">
+                <p>Kết quả tìm kiếm:</p>
+            </div>
+            <div class="mb-4">
+                <partial name="_ListProductPartial" model="@Model.ProductList" />
+            </div>
+            <partial name="_PagingLinkPartial" model="@Model.PagingInfo" />
+        }
+        else
+        {
+            <p>Không có sản phẩm tìm kiếm phù hợp...</p>
+        }
+    </div>
+@section Scripts{
+    <script>
+        $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+}

@@ -1,0 +1,102 @@
+﻿@model Yenviethue.Models.ViewModels.OrderVM
+@using Yenviethue.Utility
+
+<div>
+
+    <form asp-action="OrderPickup" asp-controller="Order" asp-route-orderId="@Model.OrderHeader.Id" method="post">
+        <div class="container row border ml-1 backgroundWhiteBorder10Padding" style="width:100%">
+            <div class="col-12" style="border-right:1px solid #bbb9b9">
+                <br />
+                <input type="hidden" asp-for="OrderHeader.Id" />
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label class="text-muted">Ngày giờ tạo đơn:</label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="OrderHeader.CreatedDate" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label>Họ tên:</label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="OrderHeader.ShippingInfo.Name" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label>Số điện thoại:</label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="OrderHeader.ShippingInfo.Phone" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label>Địa chỉ:</label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="OrderHeader.ShippingInfo.Address" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label>Ghi chú:</label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="OrderHeader.Comments" disabled class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-12">
+                <h4 class="d-flex justify-content-between align-content-center mb-3">
+                    <span class="text-muted">Mã số đơn hàng: </span>
+                    <span class="badge badge-secondary badge-pill">@Model.OrderHeader.Id</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    @foreach (var details in Model.OrderProductList)
+                    {
+                        <li class="list-group-item justify-content-between">
+                            <h6 class="mb-1">@details.NameProduct</h6>
+                            <div class="d-flex">
+                                <small class="flex-grow-1 text-muted">Số lượng: @details.Amount</small>
+                                <span class="text-muted">@SD.FormatCurrencyVND(details.Price * details.Amount)</span>
+                            </div>
+                        </li>
+                    }
+                    @if (Model.OrderHeader.CouponCode != null)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div class="text-success">
+                                <h6 class="my-0">Mã ưu đãi:</h6>
+                                <small>@Model.OrderHeader.CouponCode</small>
+                            </div>
+                            <span class="text-success">@SD.FormatCurrencyVND(Model.OrderHeader.OrderTotalOriginal - Model.OrderHeader.OrderTotal)</span>
+                        </li>
+                    }
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <span class="text-muted">Phí ship:</span>
+                        <strong class="text-muted">@SD.FormatCurrencyVND(Model.OrderHeader.ShippingFee)</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <span class="text-info">Tổng:</span>
+                        <strong class="text-info">@SD.FormatCurrencyVND(Model.OrderHeader.OrderTotal)</strong>
+                    </li>
+
+                </ul>
+                @*@if (Model.OrderHeader.Status.Equals(SD.StatusConfirmed) && (User.IsInRole(SD.AdminUser) || User.IsInRole(SD.OrderManagerUser)))
+                {
+                    <button type="submit" class="btn btn-success form-control"><i class="far fa-thumbs-up"></i> Confirm Pickup</button>
+                }
+                else
+                {*@
+                    <button type="button" disabled class="btn btn-info form-control">@Model.OrderHeader.Status</button>
+            </div>
+
+        </div>
+    </form>
+</div>

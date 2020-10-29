@@ -1,0 +1,54 @@
+﻿@model Yenviethue.Models.ViewModels.CatalogVM
+
+@{
+    ViewData["Title"] = Model.CategoryCurrent.Name;
+}
+<style>
+    .Model.CategoryCurrent-img {
+        max-height: 350px;
+    }
+</style>
+
+<div class="backgroundWhiteBorder container">
+    <partial name="_ReturnUrlBarPartial" model="Model" />
+
+    <div class="row">
+        <div class="col-md-4">
+            <partial name="_CatalogSidebar" model="@Model" />
+        </div>
+        <div class="col-md-8">
+            <div class="row mb-3">
+                <div class="col-lg-6 Model.CategoryCurrent-img">
+                    <img class="img-fluid" src="@Model.CategoryCurrent.ImgSrc" />
+                </div>
+                <div class="col-lg-6">
+                    <a class="nav-link font-weight-bold" asp-controller="Catalog" asp-action="Category" asp-route-id="@Model.CategoryCurrent.Id">@Model.CategoryCurrent.Name</a>
+                    <ul class="list-group-flush">
+                        @foreach (var subCategory in Model.RepoSubCategoryList[Model.CategoryCurrent.Id])
+                        {
+                            <li class="list-group-item p-0">
+                                <a class="nav-link" asp-controller="Catalog" asp-action="SubCategory" asp-route-id="@subCategory.Id">@subCategory.Name</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <br />
+            <hr class="mt-4 mb-4" />
+            <br />
+            <div class="row mb-3">
+                @foreach (var product in Model.ProductList)
+                {
+                    <div class="col-md-6">
+                        <partial name="_ProductBoxPartial" model="@product" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+}

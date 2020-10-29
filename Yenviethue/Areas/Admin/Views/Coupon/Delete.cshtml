@@ -1,0 +1,66 @@
+﻿@model Coupon
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+<br />
+
+<div class="backgroundWhiteBorder">
+    <form method="post" asp-action="Delete">
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Name"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Name" class="form-control" disabled/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="CouponType"></label>
+            </div>
+            <div class="col-md-5">
+                <select asp-for="CouponType" disabled asp-items="Html.GetEnumSelectList<Coupon.ECouponType>()" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="MinimumAmount"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="MinimumAmount" type="number" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Discount"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Discount" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="ImgSrc"></label>
+            </div>
+            <div class="col-md-5">
+                <img src="@Model.ImgSrc" style="width:auto"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="IsActive"></label>
+            </div>
+            <div class="col-md-5">
+                <input type="checkbox" asp-for="IsActive" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="form-group row ">
+            <div class="col-5 offset-3">
+                <partial name="_DeleteAndBackToListButton" model="Model.Id" />
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,35 @@
+﻿@model Yenviethue.Models.ViewModels.CatalogVM
+
+@{
+    ViewData["Title"] = Model.CategoryCurrent.Name + " - " + Model.SubCategoryCurrent.Name;
+}
+
+
+<div class="backgroundWhiteBorder container">
+    <partial name="_ReturnUrlBarPartial" model="Model" />
+
+    <div class="row">
+        <div class="col-lg-4">
+            <partial name="_CatalogSidebar" model="@Model" />
+        </div>
+        <div class="col-lg-8">
+            <h4>@Model.SubCategoryCurrent.Name</h4>
+            <br />
+            <hr />
+            <br />
+            <div class="row mb-3">
+                @foreach (var product in Model.ProductList)
+                {
+                    <div class="col-md-6">
+                        <partial name="_ProductBoxPartial" model="@product" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(function () { $('[data-toggle="tooltip"]').tooltip() })
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model Yenviethue.Models.ViewModels.CatalogVM
+
+<div class="border h-100" style="font-size:16px;">
+    <div class="accordion" id="accordion">
+        @foreach (var category in Model.CategoryList)
+        {
+            <div>
+                <div class="border" id="header-@category.Id">
+                    <div class="mb-0 row">
+                        <div class="col-10">
+                            <a class="nav-link text-dark font-weight-bold" asp-controller="Catalog" asp-action="Category" asp-route-id="@category.Id">@category.Name</a>
+                        </div>
+                        <div class="col-1 p-0">
+                            <a class="btn" data-toggle="collapse" data-target="#collapse-@category.Id" aria-expanded="false" aria-controls="collapse-@category.Id">
+                                <i class="fas fa-chevron-down"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapse-@category.Id" class="collapse" aria-labelledby="header-@category.Id" data-parent="#accordion">
+                    <div class="card-body p-0 m-1">
+                        <ul class="list-group-flush">
+                            @foreach (var subCategory in Model.RepoSubCategoryList[category.Id])
+                            {
+                                <li class="list-group-item p-0">
+                                    <a class="nav-link text-dark" asp-controller="Catalog" asp-action="SubCategory" asp-route-id="@subCategory.Id">@subCategory.Name</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

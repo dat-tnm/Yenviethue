@@ -1,0 +1,168 @@
+﻿@model Yenviethue.Models.ViewModels.ProductVM
+@using Yenviethue.Extensions;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="backgroundWhiteBorder">
+    <div class="row">
+        <div class="col-6">
+            <h2>Index - Product</h2>
+        </div>
+        <div class="col-6 text-right">
+            <partial name="_CreateButtonPartial" />
+        </div>
+    </div>
+    <br />
+
+    <form asp-action="Index">
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.Name"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.Name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.Price"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.Price" type="number" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.SubCategory.CategoryId"></label>
+            </div>
+            <div class="col-md-5">
+                <select id="CategoryId" asp-for="Product.SubCategory.CategoryId" asp-items="@Model.CategoryList.ToSelectListItem(Model.Product.SubCategory.CategoryId)" class="form-control">
+                    <option value="0"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.SubCategoryId"></label>
+            </div>
+            <div class="col-md-5">
+                <select asp-for="Product.SubCategoryId" name="SubCategoryId" id="SubCategoryId" asp-items="@(new SelectList(string.Empty, "Id", "Name"))" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label>Tag</label>
+            </div>
+            <div class="col-md-5">
+                <select id="TagId" name="TagId" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-info"><i class="fas fa-search"></i>Search</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        @if (Model.ProductList.Count() > 0)
+        {
+            <table class="table table-striped border">
+                <tr class="table-secondary">
+                    <th>
+                        <label>Image</label>
+                    </th>
+                    <th>
+                        <label>Name</label>
+                    </th>
+                    <th>
+                        <label>Price</label>
+                    </th>
+                    <th>
+                        <label>Stock quantity</label>
+                    </th>
+                    <th>
+                        <label>Category</label>
+                    </th>
+                    <th>
+                        <label>SubCategory</label>
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var item in Model.ProductList)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.ImgSrc" style="width:50px" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.StockQuantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.SubCategory.Category.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.SubCategory.Name)
+                        </td>
+                        <td>
+                            <Partial name="_TableButtonPartial" model="@item.Id" />
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div page-model="@Model.PagingInfo" page-classes-enabled="true" page-class="btn border"
+                 page-class-normal="btn btn-light" page-class-selected="btn btn-info active"
+                 class="btn-group">
+            </div>
+        }
+        else
+        {
+            <p>No product exists...</p>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            getSubcategory();
+            getTagList();
+            $("#CategoryId").on('change', function () {
+                getSubcategory();
+            });
+        });
+        function getSubcategory() {
+            let url = '@Url.Content("~/")' + "Admin/SubCategory/GetSubCategory";
+            let ddlsource = "#CategoryId";
+            $.getJSON(url, { id: $(ddlsource).val() }, function (data) {
+                let items = '<option value="0"></option>';
+                $("#SubCategoryId").empty();
+                $.each(data, function (i, subcategory) {
+                    items += '<option value="' + subcategory.value + '">' + subcategory.text + "</option>";
+                });
+                $("#SubCategoryId").html(items);
+            });
+        };
+        function getTagList() {
+            let url = '@Url.Content("~/")' + "Admin/Tag/GetTagList";
+            $.getJSON(url, function (data) {
+                let items = '<option value="0"></option>';
+                $("#TagId").empty();
+                $.each(data, function (i, tag) {
+                    items += '<option value="' + tag.id + '">' + tag.name + '</option>';
+                });
+                $("#TagId").html(items);
+            });
+        };
+    </script>
+}

@@ -1,0 +1,50 @@
+﻿@model Product
+@using Yenviethue.Utility
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+<style>
+    p.product-info {
+        margin-bottom: 0px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="backgroundWhiteBorder container">
+    <div class="row">
+        <div class="col-md-5 border">
+            <img class="img-fluid product-img" src="@Model.ImgSrc" />
+        </div>
+        <div class="col-md-6 p-3 product-info">
+            <h4 class="mb-3">@Model.Name</h4>
+            <h7>
+                Tình trạng:
+                @if (Model.StockQuantity > 0)
+                {<span class="text-success"> Còn hàng</span> }
+                else
+                { <span class="text-danger"> Hết hàng</span>}
+            </h7>
+            <h7>
+                <p>Quy chuẩn đóng gói: @Model.DescriptionSummary</p>
+            </h7>
+            <div class="mt-4 mb-4">
+                <h1 class="text-danger">@SD.FormatCurrencyVND(Model.Price)</h1>
+            </div>
+            <div>
+                <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                    <input type="hidden" name="ProductId" id="ProductId" value="@Model.Id" />
+                    <button class="ml-auto mr-auto btn btn-outline-danger" type="submit"><i class="fas fa-cart-plus"></i> &nbsp; Thêm vào giỏ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="backgroundWhiteBorder container">
+    <div class="border-bottom m-2">
+        <h2 class="text-danger font-weight-bold">MÔ TẢ</h2>
+    </div>
+    <div>
+        @Html.Raw(Model.DescriptionDetails);
+    </div>
+</div>

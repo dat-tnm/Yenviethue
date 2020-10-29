@@ -1,0 +1,153 @@
+﻿@model Yenviethue.Models.ViewModels.ProductVM
+@using Yenviethue.Extensions
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<br />
+
+<form method="post" asp-action="Create" enctype="multipart/form-data">
+    <div class="backgroundWhiteBorder">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.Name"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.Name" class="form-control" />
+            </div>
+            <span asp-validation-for="Product.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.Price"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.Price" type="number" class="form-control" />
+            </div>
+            <span asp-validation-for="Product.Price" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.StockQuantity"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.StockQuantity" class="form-control" value="100" />
+            </div>
+            <span asp-validation-for="Product.StockQuantity" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.ImgSrc"></label>
+            </div>
+            <div class="col-md-5">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item border-bottom-0">
+                        <button type="button" id="UpFileTab" class="nav-link active" onclick="openTab('#UpFileTab', '#UpFile')">Up file</button>
+                    </li>
+                    <li class="nav-item border-bottom-0">
+                        <button type="button" id="UrlImgTab" class="nav-link" onclick="openTab('#UrlImgTab', '#UrlImg')">URL img</button>
+                    </li>
+                </ul>
+                <div id="UpFile" class="tab_content border">
+                    <input type="file" multiple name="file" class="form-control imgsrc_input" />
+                </div>
+                <div id="UrlImg" class="tab_content border" style="display:none">
+                    <input asp-for="Product.ImgSrc" class="form-control imgsrc_input" Placeholder="URL image" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.DescriptionSummary"></label>
+            </div>
+            <div class="col-md-5">
+                <input asp-for="Product.DescriptionSummary" class="form-control" />
+            </div>
+            <span asp-validation-for="Product.DescriptionSummary" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.DescriptionDetails"></label>
+            </div>
+            <div class="col-md-5">
+                <textarea id="editor" asp-for="Product.DescriptionDetails" class="form-control"></textarea>
+            </div>
+            <span asp-validation-for="Product.DescriptionDetails" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.SubCategory.CategoryId"></label>
+            </div>
+            <div class="col-md-5">
+                <select id="CategoryId" asp-items="@Model.CategoryList.ToSelectListItem(0)" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label asp-for="Product.SubCategoryId"></label>
+            </div>
+            <div class="col-md-5">
+                <select asp-for="Product.SubCategoryId" name="SubCategoryId" id="SubCategoryId" asp-items="@(new SelectList(string.Empty, "Id", "Name"))" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-5 offset-3">
+                <partial name="_CreateAndBackToListButton" />
+            </div>
+        </div>
+    </div>
+
+    <div class="backgroundWhiteBorder" id="accordion">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#taglist-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            Add Tags &nbsp; <i class="fas fa-angle-down float-right"></i>
+        </button>
+        <div id="taglist-collapse" class="collapse">
+            
+        </div>
+    </div>
+</form>
+
+<link rel="stylesheet" href="~/lib/trumbowyg/dist/ui/trumbowyg.min.css">
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/trumbowyg/dist/trumbowyg.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#editor').trumbowyg();
+            getSubcategory();
+            $("#CategoryId").on('change', function () {
+                getSubcategory();
+            });
+            getTagList();
+        });
+        function openTab(idEvt, idContent) {$(".tab_content").hide();$("button.active").removeClass("active");$(idContent).show();$(idEvt).addClass("active");$(".imgsrc_input").val('');};
+
+        function getSubcategory() {
+            let url = '@Url.Content("~/")' + "Admin/SubCategory/GetSubCategory";
+            let ddlsource = "#CategoryId";
+            $.getJSON(url, { id: $(ddlsource).val() }, function (data) {
+                let items = '';
+                $("#SubCategoryId").empty();
+                $.each(data, function (i, subcategory) {
+                    items += '<option value="' + subcategory.value + '">' + subcategory.text + "</option>";
+                });
+                $("#SubCategoryId").html(items);
+            });
+        };
+        function getTagList() {
+            let url = '@Url.Content("~/")' + "Admin/Tag/GetTagList";
+            $.getJSON(url, function (data) {
+                let items = '';
+                $("#taglist-collapse").empty();
+                $.each(data, function (i, tag) {
+                    items += '<input type="checkbox" name="taglist-checkbox" value="' + tag.id + '"/><span class="btn btn-secondary p-0 m-2">' + tag.name + "</span>";
+                });
+                $("#taglist-collapse").html(items);
+            });
+        };
+    </script>
+}

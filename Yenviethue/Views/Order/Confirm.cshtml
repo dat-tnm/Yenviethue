@@ -1,0 +1,31 @@
+﻿@model Yenviethue.Models.ViewModels.OrderVM
+@{
+    ViewData["Title"] = "Confirm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="backgroundWhite container">
+    <div class="row px-3">
+        <div class="col-8">
+            <h2 class="text-info">Xác nhận đơn hàng</h2>
+        </div>
+        <div class="col-4 text-right">
+            <a asp-action="Index" asp-controller="Home">Về Trang chủ</a>
+        </div>
+    </div>
+
+    @if (Model.OrderHeader != null)
+    {
+        <div style="color:maroon" class="p-3">
+            Cảm ơn bạn đã đặt hàng! Xin hãy chờ chúng tôi gọi cho bạn để xác nhận. Hãy xem lại đơn hàng phía dưới.
+            <br />
+        </div>
+        <partial name="_IndividualOrderDetails" model="Model" />
+    }
+    else
+    {
+        <div class="text-danger">Đã xảy ra lỗi... Xin hãy thử lại.</div>
+    }
+</div>
+

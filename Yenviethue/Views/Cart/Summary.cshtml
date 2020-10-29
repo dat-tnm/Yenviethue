@@ -1,0 +1,190 @@
+﻿@model Yenviethue.Models.ViewModels.CartVM
+@using Microsoft.Extensions.Options
+
+@inject IOptions<Yenviethue.Utility.StripeSettings> Stripe
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+<form method="post">
+    @if (Model.CartList.Count > 0)
+    {
+        <br />
+        <input id="userId" asp-for="@Model.CartList[0].ApplicationUserId" hidden />
+        <div class="backgroundWhiteBorder">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header bg-danger text-light ml-0 row container">
+                        <div class="col-6">
+                            <i class="fa fa-shopping-cart"></i> &nbsp;
+                            Đặt hàng
+                        </div>
+                        <div class="col-6 text-right">
+                            <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-info btn-sm">Quay lại giỏ hàng</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="container rounded p-2">
+                            <div class="row">
+                                <div class="col-12 col-lg-6 pb-4">
+                                    <div class="row">
+                                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="text-info">Thông tin nhận hàng:</span>
+                                        </h4>
+                                    </div>
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Họ tên</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <span asp-validation-for="ShippingInfo.Name" class="text-danger"></span>
+                                            <input asp-for="@Model.ShippingInfo.Name" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Số điện thoại</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <span asp-validation-for="ShippingInfo.Phone" class="text-danger"></span>
+                                            <input asp-for="@Model.ShippingInfo.Phone" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Địa chỉ</label>
+                                        </div>
+                                        <div class="col-9">
+                                            <span asp-validation-for="ShippingInfo.Address" class="text-danger"></span>
+                                            <input asp-for="@Model.ShippingInfo.Address" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row my-1">
+                                        <div class="col-3">
+                                            <label>Ghi chú: </label>
+                                        </div>
+                                        <div class="col-9">
+                                            <textarea asp-for="@Model.OrderHeader.Comments" style="height:100px;" class="form-control" placeholder="tùy chọn"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-lg-5 offset-lg-1">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-info">Đơn hàng:</span>
+                                    </h4>
+                                    <ul class="list-group mb-3">
+                                        @{ var total = 0.0;
+                                            Model.OrderHeader.ShippingFee = 50;}
+
+                                        @foreach (var details in Model.CartList)
+                                        {
+                                            <li class="list-group-item justify-content-between">
+                                                <h6 class="mb-1">@details.Product.Name</h6>
+                                                <div class="d-flex">
+                                                    <small class="flex-grow-1 text-muted">Số lượng: @details.Count</small>
+                                                    <span class="text-muted">@((details.Product.Price * details.Count * 1000).ToString("C0").Substring(1)) đ</span>
+                                                </div>
+                                                @{ total += (details.Product.Price * details.Count); }
+                                            </li>
+                                        }
+                                        @if (Model.OrderHeader.CouponCode != null)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <div class="text-success">
+                                                    <h6 class="my-0">Mã ưu đãi:</h6>
+                                                    <small class="text-success">@Model.OrderHeader.CouponCode</small>
+                                                </div>
+                                                <span class="text-success">-@(((total - Model.OrderHeader.OrderTotal) * 1000).ToString("C0").Substring(1)) đ</span>
+                                            </li>
+                                        }
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <div class="text-muted">
+                                                <h6 class="my-0">Phí ship:</h6>
+                                                <input type="hidden" asp-for="OrderHeader.ShippingFee"/>
+                                            </div>
+                                            <span class="text-muted">@(((Model.OrderHeader.ShippingFee) * 1000).ToString("C0").Substring(1)) đ</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between bg-light">
+                                            <small class="text-info">Tổng tiền:</small>
+                                            <strong class="text-info">@((Model.OrderHeader.OrderTotal * 1000).ToString("C0").Substring(1)) đ</strong>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer mb-5">
+                        <div class="row">
+                            <div class="col-md-6 navbar-nav m-3">
+                                <div class="p-2 border bg-white">
+                                    <input type="radio" name="payment-radio" id="radio-visa" value="@Order.EPaymentMethod.VISA" checked />
+                                    <label for="radio-visa">Thanh toán qua VISA / MASTERCARD <img style="max-height:30px" class="ml-2 img-fluid" src="https://harecpas.com/wp-content/uploads/2019/12/How-to-claim-your-settlement-from-Visa-Mastercard-lawsuit-1.jpg" /></label>
+                                </div>
+                                @*<div class="p-2 border bg-white">
+                                    <input type="radio" name="payment-radio" id="radio-cod" value="@Order.EPaymentMethod.COD" />
+                                    <label for="radio-cod">Thanh toán khi nhận hàng (COD) <img style="max-height:30px" class="ml-5 img-fluid" src="https://www.vippng.com/png/detail/63-630661_png-file-svg-cod-icon-png.png" /></label>
+                                </div>*@
+                            </div>
+                            <div class="col-md-4 offset-md-4">
+
+                                @{
+                                    var OrderTotalForStrip = Model.OrderHeader.OrderTotal * 100 / 23;
+                                }
+                                <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                            data-key="@Stripe.Value.PublishableKey"
+                                            data-amount="@OrderTotalForStrip"
+                                            data-name="Yenviet-hue"
+                                            data-label="Place Order"
+                                            data-description="Good Food, Good Health."
+                                            data-locale="auto"
+                                            data-allow-remember-me="false"
+                                            data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                                            >
+                                    </script>
+                                <script>
+                                    document.getElementsByClassName("stripe-button-el")[0].style.display = 'none';
+                                </script>
+                                <button type="submit" id="btnPlaceOrder" onclick="return validateInput()" class="btn btn-success form-control">Đặt hàng ngay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="backgroundWhiteBorder"> Chưa có sản phẩm nào được thêm vào giỏ...</div>
+    }
+</form>
+</div>
+@section Scripts{
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    function validateInput() {
+        var name = document.getElementById("ShippingInfo_Name").value;
+        var phone = document.getElementById("ShippingInfo_Phone").value;
+        var address = document.getElementById("ShippingInfo_Address").value;
+        if (name.toString().length == 0) {
+            alert("Hãy nhập họ tên !")
+            return false;
+        }
+        else if (phone.toString().length == 0) {
+            alert("Hãy nhập số điện thoại !")
+            return false;
+        }
+        else if (address.toString().length == 0) {
+            alert("Hãy nhập địa chỉ !")
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+}

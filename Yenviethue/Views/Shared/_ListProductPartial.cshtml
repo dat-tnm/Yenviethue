@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Product>
+
+<div class="row text-center">
+    @foreach (var product in Model)
+    {
+        <div class="col-md-6 col-lg-3 p-2">
+            <div class="d-flex flex-column border p-3">
+                <div class="box-img">
+                    <img src="@product.ImgSrc" class="img-fluid product-img" />
+                </div>
+                <div class="box-item d-flex flex-column">
+                    <h6 class="mt-auto mb-auto">@product.Name</h6>
+                </div>
+                <h5 class="text-danger">@((product.Price * 1000).ToString("C0").Substring(1)) đ</h5>
+                <div class="d-flex justify-content-center">
+                    <div class="mr-2">
+                        <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                            <button class="btn btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ"><i class="fas fa-cart-plus"></i></button>
+                        </form>
+                    </div>
+                    <a asp-controller="Catalog" asp-action="Product" asp-route-id="@product.Id" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Chi tiết"><i class="fas fa-search"></i></a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
